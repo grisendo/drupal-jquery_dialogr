@@ -57,7 +57,7 @@ function jquery_dialogr_blocks_preprocess_html(&$variables) {
           $config[$key] = TRUE;
         }
         if (is_numeric($config[$key])) {
-          $config[$key] = (int)$config[$key];
+          $config[$key] = (int) $config[$key];
         }
       }
       drupal_add_js(

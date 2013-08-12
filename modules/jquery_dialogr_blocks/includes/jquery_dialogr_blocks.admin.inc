@@ -23,9 +23,8 @@ function _jquery_dialogr_blocks_form_block_admin_configure_alter(&$form, &$form_
   $form['visibility']['dialogrblocks'] = array(
     '#type' => 'fieldset',
     '#title' => t('Dialogr settings'),
-    // TO-DO: Cambiar texto
-    '#description' => t('The settings for loading the block via AJAX request made after the page loading. ' .
-      'This method is used for anonymous user only, and the whole page must be cached.'),
+    // TO-DO: Change text.
+    '#description' => '',
     '#weight' => 65,
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
@@ -36,8 +35,8 @@ function _jquery_dialogr_blocks_form_block_admin_configure_alter(&$form, &$form_
   $form['visibility']['dialogrblocks']['is_dialogr'] = array(
     '#type' => 'select',
     '#title' => t('Use jQuery Dialogr'),
-    // TO-DO: Cambiar texto
-    '#description' => t("Select \"yes\" if this block has dynamic content and isn't displayed correctly on cached pages."),
+    // TO-DO: Change text.
+    '#description' => '',
     '#options' => array(
       0 => t('No'),
       1 => t('Yes'),
@@ -154,8 +153,7 @@ function _jquery_dialogr_blocks_form_block_admin_configure_alter(&$form, &$form_
   );
 
   // TO-DO: More options: show, hide, title, dialogClass, closeText, position!
-
-  // TO-DO: Remember last position
+  // TO-DO: Remember last position.
   $form['#submit'][] = 'jquery_dialogr_blocks_save_settings';
 
 }
@@ -191,7 +189,7 @@ function jquery_dialogr_blocks_save_settings($form, &$form_state) {
   db_merge('jquery_dialogr_blocks')
   ->key(
     array(
-      'block_id' => $form_state['values']['module'] . '-' . $form_state['values']['delta']
+      'block_id' => $form_state['values']['module'] . '-' . $form_state['values']['delta'],
     )
   )
   ->fields(
