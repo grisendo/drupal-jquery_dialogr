@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the jQuery Dialogr module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function jquery_dialogr_blocks_schema() {
+
+  $schema = array();
+  $schema['jquery_dialogr_blocks'] = array(
+    'description' => 'Stores AJAX settings for blocks.',
+    'fields' => array(
+      'block_id' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The primary identifier for a block.',
+      ),
+      'is_dialogr' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Boolean indicating whether Dialogr should be applied to the block.',
+      ),
+      'config' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'description' => "Extra Dialogr options.",
+      ),
+    ),
+    'primary key' => array('block_id'),
+    'indexes' => array(
+      'idx_is_dialogr' => array('is_dialogr'),
+    ),
+  );
+  return $schema;
+
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function jquery_dialogr_blocks_uninstall() {
+
+  cache_clear_all('jquery_dialogr_blocks', 'cache');
+
+}

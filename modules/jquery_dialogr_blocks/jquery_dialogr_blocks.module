@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * @file
+ * Allows to apply jQuery Dialogr to blocks.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function jquery_dialogr_blocks_form_block_admin_configure_alter(&$form, &$form_state, $form_id) {
+
+  module_load_include('inc', 'jquery_dialogr_blocks', 'includes/jquery_dialogr_blocks.admin');
+  _jquery_dialogr_blocks_form_block_admin_configure_alter($form, $form_state, $form_id);
+
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function jquery_dialogr_blocks_preprocess_block(&$variables) {
+
+  $dialogr_sandbox = &drupal_static('jquery_dialogr_blocks_sandbox', array());
+
+  $id = $variables['block']->module . '-' . $variables['block']->delta;
+  $settings = array();
+  if (!jquery_dialogr_blocks_is_dialogr($id, $settings)) {
+    return;
+  }
+  if (isset($settings['is_dialogr']) && $settings['is_dialogr']) {
+    $variables['classes_array'][] = 'jquery-dialogr-box';
+    $variables['classes_array'][] = 'jdb-settings--' . $id;
+    $dialogr_sandbox[$id] = $settings;
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function jquery_dialogr_blocks_preprocess_html(&$variables) {
+
+  $dialogr_sandbox = &drupal_static('jquery_dialogr_blocks_sandbox', array());
+
+  if ($dialogr_sandbox && count($dialogr_sandbox) > 0) {
+    drupal_add_library('jquery_dialogr', 'jquery_dialogr');
+    drupal_add_js(
+      drupal_get_path('module', 'jquery_dialogr_blocks') . '/js/jquery_dialogr_blocks.js'
+    );
+    foreach ($dialogr_sandbox as $id => $settings) {
+      $config = unserialize($settings['config']);
+      foreach ($config as $key => $value) {
+        if (strtolower($config[$key]) === "false") {
+          $config[$key] = FALSE;
+        }
+        if (strtolower($config[$key]) === "true") {
+          $config[$key] = TRUE;
+        }
+        if (is_numeric($config[$key])) {
+          $config[$key] = (int)$config[$key];
+        }
+      }
+      drupal_add_js(
+        array(
+          'jquery_dialogr_blocks' => array(
+            $id => $config,
+          ),
+        ),
+        'setting'
+      );
+    }
+  }
+
+}
+
+/**
+ * Returns TRUE if the block is configured to be rendered with Dialogr.
+ * Block specific settings are also returned.
+ */
+function jquery_dialogr_blocks_is_dialogr($block_id, &$settings) {
+
+  $dialogr_blocks = &drupal_static(__FUNCTION__, NULL);
+
+  if (!$dialogr_blocks) {
+    $cached = cache_get('jquery_dialogr_blocks');
+    if ($cached) {
+      $dialogr_blocks = $cached->data;
+    }
+    else {
+      $dialogr_blocks = jquery_dialogr_blocks_update_cache();
+    }
+  }
+  if (isset($dialogr_blocks[$block_id])) {
+    $settings = $dialogr_blocks[$block_id];
+    return TRUE;
+  }
+  $settings = array();
+  return FALSE;
+
+}
+
+/**
+ * Stores Dialogr settings for the blocks in the system cache table.
+ * It allows to get all block options with a single query and a static var.
+ */
+function jquery_dialogr_blocks_update_cache() {
+
+  $sql = db_select('jquery_dialogr_blocks', 'j')
+    ->fields('j')
+    ->execute();
+  $dialogr_blocks_data = array();
+  while ($row = $sql->fetchAssoc()) {
+    $dialogr_blocks_data[$row['block_id']] = $row;
+  }
+  cache_set('jquery_dialogr_blocks', $dialogr_blocks_data);
+  return $dialogr_blocks_data;
+
+}

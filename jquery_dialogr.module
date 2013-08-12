@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * jQuery Dialogr library integration.
+ */
+
+/**
+ * Implements hook_library().
+ */
+function jquery_dialogr_library() {
+
+  $libraries = array();
+
+  $libraries['jquery_dialogr'] = array(
+    'title' => 'jQuery dialogr',
+    'website' => 'http://carvalhar.com/componente/jQueryDialogr/',
+    'version' => '2.1',
+    'js' => array(
+      libraries_get_path('jquery_dialogr') . '/js/ui.dialogr.js' => array(
+        'group' => JS_DEFAULT,
+      ),
+    ),
+    'css' => array(
+      libraries_get_path('jquery_dialogr') . '/css/ui-lightness/jquery-ui-1.8.6.custom.css' => array(
+        'group' => CSS_DEFAULT,
+        'weight' => 40,
+      ),
+      libraries_get_path('jquery_dialogr') . '/css/jquery.dialogr.css' => array(
+        'group' => CSS_DEFAULT,
+        'weight' => 50,
+      ),
+    ),
+    'dependencies' => array(
+      array('system', 'ui.widget'),
+      array('system', 'ui.button'),
+      array('system', 'ui.draggable'),
+      array('system', 'ui.mouse'),
+      array('system', 'ui.position'),
+      array('system', 'ui.resizable'),
+    ),
+  );
+
+  return $libraries;
+
+}
