@@ -44,7 +44,12 @@ function _jquery_dialogr_blocks_form_block_admin_configure_alter(&$form, &$form_
     '#default_value' => $value,
   );
 
-  $config = unserialize($settings['config']);
+  if (isset($settings['config'])) {
+    $config = unserialize($settings['config']);
+  }
+  else {
+    $config = array();
+  }
 
   $form['visibility']['dialogrblocks']['maximized'] = array(
     '#type' => 'select',
